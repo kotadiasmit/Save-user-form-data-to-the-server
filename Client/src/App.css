@@ -1,0 +1,93 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.heading {
+  text-align: center;
+  margin-bottom: 0px;
+}
+.form {
+  width: 265px;
+  padding: 30px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.form-sub-container {
+  margin-bottom: 15px;
+}
+.form-sub-container label {
+  display: inline-block;
+  margin-bottom: 5px;
+}
+.input-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 8px;
+  width: 250px;
+  border: 2px solid #d3d3d3;
+  border-radius: 4px;
+}
+.input-container.error {
+  border-color: #e74c3c;
+}
+.input-container.success {
+  border-color: #80e73c;
+}
+
+.input-field {
+  padding: 5px;
+  font-family: inherit;
+  font-size: 14px;
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  background-color: transparent !important;
+}
+.input-icon {
+  display: none;
+}
+
+.input-icon.success {
+  color: #2ecc71;
+  display: inline;
+}
+.input-icon.error {
+  color: #e74c3c;
+  display: inline;
+}
+
+small {
+  color: #e74c3c;
+}
+.error-message {
+  margin-top: 20px;
+}
+.file-container {
+  margin-bottom: 15px;
+}
+.file-container input {
+  width: 260px;
+}
+
+.btn {
+  background-color: #0b3cd0;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+  padding: 5px 0px 5px 0px;
+  margin-top: 20px;
+  cursor: pointer;
+  width: 110px;
+}
+.btn:active {
+  background-color: #032895;
+}
