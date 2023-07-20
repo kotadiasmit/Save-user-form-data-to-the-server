@@ -11,25 +11,28 @@ const ValidationIcon = ({ valid }) =>
     <AiFillExclamationCircle className="input-icon error" />
   );
 
-const FileUploader = () => {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    password2: "",
-    selectedFile: null,
-  });
-  const [passwordErrors, setPasswordErrors] = useState({
-    length: false,
-    uppercase: false,
-    lowercase: false,
-    digit: false,
-    specialChars: false,
-  });
+const initialFormData = {
+  username: "",
+  email: "",
+  password: "",
+  password2: "",
+  selectedFile: "",
+};
 
+const initialPasswordErrors = {
+  length: false,
+  uppercase: false,
+  lowercase: false,
+  digit: false,
+  specialChars: false,
+};
+
+const FileUploader = () => {
+  const [formData, setFormData] = useState(initialFormData);
+  const [passwordErrors, setPasswordErrors] = useState(initialPasswordErrors);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleFormSubmit = async (event) => {
+  const onFormSubmit = async (event) => {
     event.preventDefault();
     setIsSubmitted(true);
     const checkFormInputs = checkInputs();
@@ -46,6 +49,9 @@ const FileUploader = () => {
         await axios.post("http://localhost:2000/submit-form", fd);
         console.log("done");
         alert("Form data submitted successfully.");
+        setIsSubmitted(false);
+        setFormData(initialFormData);
+        document.getElementById("fileInput").value = "";
       } catch (error) {
         console.error("Error submitting form data:", error);
         alert("Failed to submit form data.");
@@ -57,11 +63,12 @@ const FileUploader = () => {
 
   const checkInputs = () => {
     const { username, email, password, password2, selectedFile } = formData;
-    const isUsernameValid = username !== "";
-    const isEmailValid = email !== "" && isEmail(email);
+    const isUsernameValid = !!username;
+    const isEmailValid = !!email && isEmail(email);
     const isPasswordValid = isPasswordStrong(password);
-    const isPassword2Valid = password2 !== "" && password === password2;
-    const isFileUploaded = selectedFile !== null;
+    const isPassword2Valid = !!password2 && password === password2;
+    const isFileUploaded = !!selectedFile;
+    console.log(isUsernameValid, isFileUploaded);
     if (
       isUsernameValid &&
       isEmailValid &&
@@ -80,18 +87,19 @@ const FileUploader = () => {
   const isPasswordStrong = (password) => {
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+,.?:;<>=~])[a-zA-Z\d!@#$%^&*()_+,.?:;<>=~]{8,}$/;
-    console.log(passwordRegex.test(password));
     return passwordRegex.test(password);
   };
 
   useEffect(() => {
     const { password } = formData;
+
     const passwordErrorsCopy = { ...passwordErrors };
     passwordErrorsCopy.length = password.length >= 8;
     passwordErrorsCopy.uppercase = /[A-Z]/.test(password);
     passwordErrorsCopy.lowercase = /[a-z]/.test(password);
     passwordErrorsCopy.digit = /\d/.test(password);
     passwordErrorsCopy.specialChars = /[!@#$%^&*()_+,.?:;<>=~]/.test(password);
+
     setPasswordErrors(passwordErrorsCopy);
   }, [formData.password]);
 
@@ -103,7 +111,7 @@ const FileUploader = () => {
     });
   };
 
-  const handleFileChange = (event) => {
+  const onFileChange = (event) => {
     const { files } = event.target;
     setFormData({ ...formData, selectedFile: files[0] });
   };
@@ -147,14 +155,14 @@ const FileUploader = () => {
   return (
     <div className="container">
       <h2 className="heading">Create Account</h2>
-      <form className="form" onSubmit={handleFormSubmit}>
+      <form className="form" onSubmit={onFormSubmit}>
         <div className="form-sub-container">
           <label htmlFor="username">Username</label>
           <div
             className={classNames({
               "input-container": true,
-              success: isSubmitted && formData.username !== "",
-              error: isSubmitted && formData.username === "",
+              success: isSubmitted && !!formData.username,
+              error: isSubmitted && !formData.username,
             })}
           >
             <input
@@ -179,10 +187,9 @@ const FileUploader = () => {
             className={classNames({
               "input-container": true,
               success:
-                isSubmitted && formData.email !== "" && isEmail(formData.email),
+                isSubmitted && !!formData.email && isEmail(formData.email),
               error:
-                isSubmitted &&
-                (formData.email === "" || !isEmail(formData.email)),
+                isSubmitted && (!!formData.email || !isEmail(formData.email)),
             })}
           >
             <input
@@ -196,7 +203,7 @@ const FileUploader = () => {
             />
             {isSubmitted && (
               <ValidationIcon
-                valid={formData.email !== "" && isEmail(formData.email)}
+                valid={!!formData.email && isEmail(formData.email)}
               />
             )}
           </div>
@@ -238,11 +245,11 @@ const FileUploader = () => {
               "input-container": true,
               success:
                 isSubmitted &&
-                formData.password2 !== "" &&
+                !!formData.password2 &&
                 formData.password === formData.password2,
               error:
                 isSubmitted &&
-                (formData.password2 === "" ||
+                (!formData.password2 ||
                   formData.password !== formData.password2),
             })}
           >
@@ -258,21 +265,21 @@ const FileUploader = () => {
             {isSubmitted && (
               <ValidationIcon
                 valid={
-                  formData.password2 !== "" &&
+                  !!formData.password2 &&
                   formData.password === formData.password2
                 }
               />
             )}
           </div>
-          {formData.password2 === "" && isSubmitted ? (
+          {!formData.password2 && isSubmitted ? (
             <small>Password2 cannot be blank</small>
           ) : formData.password !== formData.password2 && isSubmitted ? (
             <small>Passwords do not match</small>
           ) : null}
         </div>
         <div className="file-container">
-          <input type="file" onChange={handleFileChange} />
-          {formData.selectedFile === null && isSubmitted && (
+          <input type="file" onChange={onFileChange} id="fileInput" />
+          {!formData.selectedFile && isSubmitted && (
             <small>Please upload file</small>
           )}
         </div>
