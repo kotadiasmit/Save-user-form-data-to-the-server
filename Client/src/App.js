@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import classNames from "classnames";
 import axios from "axios";
+import classNames from "classnames";
 import { AiFillCheckCircle, AiFillExclamationCircle } from "react-icons/ai";
 import "./App.css";
 
@@ -45,15 +45,12 @@ const FileUploader = () => {
       fd.append("password2", formData.password2);
 
       try {
-        console.log("processing");
         await axios.post("http://localhost:2000/submit-form", fd);
-        console.log("done");
         alert("Form data submitted successfully.");
         setIsSubmitted(false);
         setFormData(initialFormData);
         document.getElementById("fileInput").value = "";
       } catch (error) {
-        console.error("Error submitting form data:", error);
         alert("Failed to submit form data.");
       }
     } else {
@@ -68,7 +65,6 @@ const FileUploader = () => {
     const isPasswordValid = isPasswordStrong(password);
     const isPassword2Valid = !!password2 && password === password2;
     const isFileUploaded = !!selectedFile;
-    console.log(isUsernameValid, isFileUploaded);
     if (
       isUsernameValid &&
       isEmailValid &&

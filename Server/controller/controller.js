@@ -5,8 +5,9 @@ const uploadFormDetails = async (req, res) => {
   const form = formidable({ multiples: true });
   form.parse(req, (err, fields, files) => {
     if (err) {
-      console.error("Error parsing form:", err);
-      return res.status(500).json({ message: "Failed to process file upload" });
+      return res
+        .status(500)
+        .json({ message: `Failed to process file upload ${err}` });
     }
 
     const { username, email, password, password2 } = fields;
@@ -31,15 +32,13 @@ const uploadFormDetails = async (req, res) => {
       password,
       selectedFile: fileDetails,
     };
-    console.log(newFormData);
     Form.create(newFormData)
-      .then((newFormData) => {
-        console.log("File saved to MongoDB:", newFormData);
+      .then(() => {
         res.status(200).json({ message: "File uploaded and saved" });
       })
       .catch((err) => {
         console.error("Error saving file to MongoDB:", err);
-        res.status(500).json({ message: "Failed to save file" });
+        res.status(500).json({ message: `Failed to save file ${err}` });
       });
   });
 };
